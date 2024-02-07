@@ -4,6 +4,12 @@ I'd like you to demonstrate your ability to set up a Spring Java project for CRU
 You'll be building a People Manager application. It's a simple Spring Java project that allows users to perform CRUD operations (Create, Read, Update, Delete) on a person's details like their name, last name, and birthdate.
 
 You'll need to use Spring Web, Spring Data JPA, and the MySQL Driver for database connectivity.
+#### Prerequisites 
+
+ - IDE
+ - Java JDK 11+
+ - MySQL server 8+ (configured and ready to create a DB schema)
+ - MySQL Workbench (optional) 
 
 ### Step 1: Create a Maven Project
 
