@@ -382,5 +382,5 @@ classDiagram
 
 ### Step 10: Run and Test the Application
 
-1. Upload the code to the Git repo  
-2. Open a Pull request 
+1. Upload the code to the Git repo in a branch  
+2. Open a Pull request to merge with main
