@@ -10,6 +10,9 @@ You'll need to use Spring Web, Spring Data JPA, and the MySQL Driver for databas
 1.  Open Eclipse IDE and create a new Maven project.
     
 2.  Fill in the group id as `com.interview` and the artifact id as `people-manager`.
+
+#### Note:
+You can also use [Spring initializer](https://start.spring.io/)
     
 
 ### Step 2: Add Dependencies
