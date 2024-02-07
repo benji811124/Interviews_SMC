@@ -1,4 +1,4 @@
-# People Manager for Eclipse
+# People Manager assignment
 I'd like you to demonstrate your ability to set up a Spring Java project for CRUD operations in a MySQL database. You'll be using Eclipse IDE for this task. Let's get started.
 
 You'll be building a People Manager application. It's a simple Spring Java project that allows users to perform CRUD operations (Create, Read, Update, Delete) on a person's details like their name, last name, and birthdate.
