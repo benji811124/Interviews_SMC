@@ -28,7 +28,7 @@ You can also use [Spring initializer](https://start.spring.io/)
 2.  Add dependencies for Spring Web, Spring Data JPA, and MySQL Driver:
     
 
-```
+``` xml
  <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -60,13 +60,13 @@ You can also use [Spring initializer](https://start.spring.io/)
     
 2.  Configure the database connection properties:
     
-    1.  ```
+      ``` properties
         spring.datasource.url=jdbc:mysql://localhost:3306/peopledb
         spring.datasource.username=
         spring.datasource.password=
         spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
         spring.jpa.hibernate.ddl-auto=update
-        ```
+      ```
         
 3.  Create new peopledb shema in the DB
     
@@ -189,21 +189,21 @@ classDiagram
     
 2.  Copy the code:
     
-    ```
+    ``` Java
     package com.interview.peoplemanager.repository;
-    
-    
+
+
     import java.sql.Date;
-    
+
     import org.assertj.core.api.Assertions;
     import org.junit.jupiter.api.Test;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
     import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
     import org.springframework.test.annotation.Rollback;
-    
+
     import com.interview.peoplemanager.model.Person;
-    
+
     @DataJpaTest
     @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
     @Rollback(false)
@@ -213,23 +213,14 @@ classDiagram
     
         @Test
         public void testAddNew(){
-            Person person    = new Person();
-    
-            person.setName("John");
-            person.setLastName("Smith");
-            person.setBirthdate(new Date(1981-1900, 11-1, 24));
-    
+            Person person    = new Person("John","Smith", new Date(375485579000L));
             Person savedPerson = repo.save(person);
             Assertions.assertThat(savedPerson).isNotNull();
-    
-            person    = new Person();
-            person.setName("Jane");
-            person.setLastName("Smith");
-            person.setBirthdate(new Date(1985-1900, 1-1, 11));
-    
+            person    = new Person("Jane","Smith", new Date(474327179000L));
             savedPerson = repo.save(person);
             Assertions.assertThat(savedPerson).isNotNull();
             Assertions.assertThat(savedPerson.getId()).isGreaterThan(0);
+
         }
     }
     
@@ -250,9 +241,8 @@ classDiagram
     
 2.  Copy the code:
     
-    ```
+    ``` Java
     package com.interview.peoplemanager.controller;
-    
     import org.junit.jupiter.api.BeforeEach;
     import org.junit.jupiter.api.Test;
     import org.mockito.InjectMocks;
@@ -260,7 +250,7 @@ classDiagram
     import org.mockito.MockitoAnnotations;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
-    
+
     import java.sql.Date;
     import java.util.Arrays;
     import java.util.List;
@@ -268,103 +258,103 @@ classDiagram
     
     import static org.junit.jupiter.api.Assertions.assertEquals;
     import static org.mockito.Mockito.*;
-    
+
     import com.interview.peoplemanager.model.Person;
     import com.interview.peoplemanager.service.PersonService;
-    
-    
+
     class PersonControllerTest {
-    
-        @Mock
-        private PersonService personService;
-    
-        @InjectMocks
-        private PersonController personController;
-    
-        @BeforeEach
-        void setUp() {
-            MockitoAnnotations.openMocks(this);
-        }
-    
-        @Test
-        void testGetAllPeople() {
-    
-            List<Person> people = Arrays.asList(
-                    new Person("John", "Doe", new Date(1981-1900, 11-1, 24)),
-                    new Person("Jane", "Doe", new Date(1985-1900, 1-1, 11)));
-            when(personService.getAllPeople()).thenReturn(people);
-    
-            ResponseEntity<List<Person>> response = personController.getAllPeople();
-    
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(people, response.getBody());
-        }
-    
-        @Test
-        void testGetPersonByIdFound() {
-            int id = 1;
-            Person person = new Person("John", "Doe", new Date(1981-1900, 11-1, 24));
-            when(personService.getPersonById(id)).thenReturn(Optional.of(person));
-    
-            ResponseEntity<Person> response = personController.getPersonById(id);
-    
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(person, response.getBody());
-        }
-    
-        @Test
-        void testGetPersonByIdNotFound() {
-            int id = 1;
-            when(personService.getPersonById(id)).thenReturn(Optional.empty());
-    
-            ResponseEntity<Person> response = personController.getPersonById(id);
-    
-            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        }
-    
-        @Test
-        void testCreatePerson() {
-            Person person = new Person("John", "Doe", new Date(1981-1900, 11-1, 24));
-            when(personService.savePerson(person)).thenReturn(person);
-    
-            ResponseEntity<Person> response = personController.createPerson(person);
-    
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            assertEquals(person, response.getBody());
-        }
-    
-        @Test
-        void testUpdatePersonFound() {
-            int id = 1;
-            Person person = new Person("John", "Doe", new Date(1981-1900, 11-1, 24));
-            when(personService.getPersonById(id)).thenReturn(Optional.of(person));
-            when(personService.savePerson(person)).thenReturn(person);
-    
-            ResponseEntity<Person> response = personController.updatePerson(id, person);
-    
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(person, response.getBody());
-        }
-    
-        @Test
-        void testUpdatePersonNotFound() {
-            int id = 1;
-            Person person = new Person("John", "Doe", new Date(1981-1900, 11-1, 24));
-            when(personService.getPersonById(id)).thenReturn(Optional.empty());
-    
-            ResponseEntity<Person> response = personController.updatePerson(id, person);
-    
-            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        }
-    
-        @Test
-        void testDeletePerson() {
-            int id = 1;
-            ResponseEntity<Void> response = personController.deletePerson(id);
-    
-            assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-            verify(personService, times(1)).deletePerson(id);
-        }
+    @Mock
+    private PersonService personService;
+
+    @InjectMocks
+    private PersonController personController;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetAllPeople() {
+
+        List<Person> people = Arrays.asList(
+                new Person("John", "Doe", new Date(375485579000L)),
+                new Person("Jane", "Doe", new Date(474327179000L)));
+        when(personService.getAllPeople()).thenReturn(people);
+
+        ResponseEntity<List<Person>> response = personController.getAllPeople();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(people, response.getBody());
+    }
+
+    @Test
+    void testGetPersonByIdFound() {
+        int id = 1;
+        Person person = new Person("John",
+                "Doe",
+                new Date(375485579000L));
+        when(personService.getPersonById(id)).thenReturn(Optional.of(person));
+
+        ResponseEntity<Person> response = personController.getPersonById(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(person, response.getBody());
+    }
+
+    @Test
+    void testGetPersonByIdNotFound() {
+        int id = 1;
+        when(personService.getPersonById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<Person> response = personController.getPersonById(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testCreatePerson() {
+        Person person = new Person("John", "Doe", new Date(375485579000L));
+        when(personService.savePerson(person)).thenReturn(person);
+
+        ResponseEntity<Person> response = personController.createPerson(person);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(person, response.getBody());
+    }
+
+    @Test
+    void testUpdatePersonFound() {
+        int id = 1;
+        Person person = new Person("John", "Doe", new Date(375485579000L));
+        when(personService.getPersonById(id)).thenReturn(Optional.of(person));
+        when(personService.savePerson(person)).thenReturn(person);
+
+        ResponseEntity<Person> response = personController.updatePerson(id, person);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(person, response.getBody());
+    }
+
+    @Test
+    void testUpdatePersonNotFound() {
+        int id = 1;
+        Person person = new Person("John", "Doe", new Date(375485579000L));
+        when(personService.getPersonById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<Person> response = personController.updatePerson(id, person);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testDeletePerson() {
+        int id = 1;
+        ResponseEntity<Void> response = personController.deletePerson(id);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(personService, times(1)).deletePerson(id);
+    }
     }
     
     ```
